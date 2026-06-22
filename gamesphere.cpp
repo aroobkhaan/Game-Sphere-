@@ -1,10 +1,11 @@
-# include <iostream>
+#include <iostream>
 #include <string>
 #include <cstdlib>
 #include <ctime>
 #include <cctype>
 using namespace std;
 void hospitalGame();
+bool gameOver = false;
 void ticTacToeGame();
 void hangmanGame ();
 void chessGame();
@@ -141,6 +142,7 @@ void room1() {
     cout << "You never made it out.                       " << endl;
     cout << "=== GAME OVER ===                            " << endl;
     cout << "==============================================" << endl;
+    gameOver = true;
     return;
 }
 
@@ -192,6 +194,7 @@ void room2() {
     cout << "You never escaped the Patient Ward.          " << endl;
     cout << "=== GAME OVER ===                            " << endl;
     cout << "==============================================" << endl;
+    gameOver = true;
     return;
 }
 
@@ -231,7 +234,9 @@ void room3() {
             if (attempts > 0) {
                 cout << "Wrong answer." << endl;
                 cout << "The chemicals around you start vibrating..." << endl;
+                gameOver = true;
             }
+            return;
         }
     }
 
@@ -241,6 +246,7 @@ void room3() {
     cout << "You never escaped the Laboratory.            " << endl;
     cout << "=== GAME OVER ===                            " << endl;
     cout << "==============================================" << endl;
+    gameOver = true;
     return;
 }
 
@@ -291,6 +297,7 @@ void room4() {
     cout << "You never left the Operation Theatre.        " << endl;
     cout << "=== GAME OVER ===                            " << endl;
     cout << "==============================================" << endl;
+    gameOver = true;
     return;
 }
 
@@ -355,9 +362,25 @@ void hospitalEscape() {
     displayIntro();
     displayRules();
     room1();
+    if(gameOver) 
+    {
+        return;
+    }
     room2();
+    if(gameOver) 
+    {
+        return;
+    }
     room3();
+    if(gameOver) 
+    {
+        return;
+    }
     room4();
+    if(gameOver) 
+    {
+        return;
+    }
     room5();
 }
 char board[3][3] = {
@@ -802,7 +825,7 @@ bool isValidMove(char board[8][8],int startRow, int startCol,int endRow, int end
 
     return true;
 }
-bool movePiece(char gameBoard[8][8], int startRow, int startCol, int endRow , int endCol , bool whiteTurn)
+bool movePiece(char gameBoard[8][8], int startRow, int startCol, int endRow , int endCol , bool whiteTurn , bool &gameover)
 {
     // Check board limits outer range 
     if(startRow < 0 || startRow > 7 || startCol < 0 || startCol > 7 || endRow < 0 || endRow > 7 ||endCol < 0 || endCol > 7)
@@ -862,12 +885,31 @@ bool movePiece(char gameBoard[8][8], int startRow, int startCol, int endRow , in
          << endl;
     return false;
     }
+    char targetPiece = board[endRow][endCol];
 
+    // White king captured
+    if(targetPiece == 'K')
+    {
+      cout << "\nCHECKMATE!" << endl;
+      cout << "BLACK WINS!" << endl;
+
+      gameover == true;
+    }
+
+    // Black king captured
+    if(targetPiece == 'k')
+    {
+      cout << "\nCHECKMATE!" << endl;
+      cout << "WHITE WINS!" << endl;
+
+      gameover == true;
+    }
     // Move piece
     gameBoard[endRow][endCol] = piece;
 
     // Empty old place
     gameBoard[startRow][startCol] = '.';
+
 
     return true;
 }
@@ -877,11 +919,11 @@ void chessGame()
     char gameBoard[8][8];
 
     int startRow , startCol , endRow , endCol;
-    bool moveResult;
+    bool moveResult , gameover;
     bool whiteTurn = true;
      setupBoard(gameBoard); // create board
 
-    while(true)
+    while(true) 
     {
         showBoard(gameBoard);
          if(whiteTurn == true)
@@ -902,7 +944,7 @@ void chessGame()
         cout << "Enter end column: ";
           endCol = getNumber();
         // Move piece
-        moveResult = movePiece(gameBoard, startRow, startCol, endRow, endCol , whiteTurn);
+        moveResult = movePiece(gameBoard, startRow, startCol, endRow, endCol , whiteTurn , gameover);
 
         if(moveResult == true)
         {
@@ -914,6 +956,9 @@ void chessGame()
             cout << "Invalid Move" << endl;
         }
     }
+      cout << "\n=================" << endl;
+      cout << "   GAME OVER" << endl;
+      cout << "=================" << endl;
 }
 int main()
 {
